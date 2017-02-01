@@ -22,7 +22,7 @@ def military_to_standard(time):
     if days:
         day_string = ''
         if days == 1:
-            day_string = '(the next day)'
+            day_string = '(tomorrow)'
         else:
             day_string = '({} days from now)'.format(days)
         return '{} {}'.format(formatted_time, day_string)
