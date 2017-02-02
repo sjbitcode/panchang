@@ -3,6 +3,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from jinja2 import Environment, FileSystemLoader
+
 
 class Mailer:
     def __init__(
@@ -43,23 +45,76 @@ class Mailer:
         msg['To'] = ','.join(self.receivers)
 
         html = '''\
-        <html>
-            <head></head>
-            <body>
-                <table style="border: blue 1px solid;">
-                    <tr><td class="cell">Cell 1.1</td><td class="cell">Cell 1.2</td></tr>
-                    <tr><td class="cell">Cell 2.1</td><td class="cell"></td></tr>
-                </table>
-            </body>
-        </html>
-        '''
+<html>
+    <head></head>
+    <body>
+        <table align="center" style="width:100%;">
+            <tr>
+                <th style="text-align:center;">Suntime times</th>
+            </tr>
+            <tr>
+                <td>Sunrise</td>
+                <td>07:06:23 AM</td>
+            </tr>
+            <tr>
+                <td>Sunset</td>
+                <td>05:54:12 PM</td>
+            </tr>
+
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr>
+                <th style="text-align:center;">Auspicious times</th>
+            </tr>
+            <tr>
+                <td>Abhijit Muhurta</td>
+                <td>11:49:40 AM - 12:30:03 PM</td>
+            </tr>
+            <tr>
+                <td>Amritkalam</td>
+                <td>08:22:41 AM - 09:38:25 AM</td>
+            </tr>
+
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+
+            <tr>
+                <th style="text-align:center;">Inauspicious times</th>
+            </tr>
+            <tr>
+                <td>Durmuhurtham</td>
+                <td>11:49:40 AM - 12:30:03 PM</td>
+            </tr>
+            <tr>
+                <td>Yamagandam</td>
+                <td>11:09:02 PM - 12:41:22 AM (tomorrow)</td>
+            </tr>
+            <tr>
+                <td>Rahukalam</td>
+                <td>11:49:40 AM - 12:30:03 PM</td>
+            </tr>
+            <tr>
+                <td>Varjyam</td>
+                <td>11:49:40 AM - 12:30:03 PM</td>
+            </tr>
+            <tr>
+                <td>Gulikai</td>
+                <td>11:49:40 AM - 12:30:03 PM</td>
+            </tr>
+        </table>
+    </body>
+</html>
+'''
         part2 = MIMEText(html, 'html')
         msg.attach(part2)
         # import pdb; pdb.set_trace();
         try:
             # Set up server and login.
-            server_ssl = smtplib.SMTP(self.server)
-            server_ssl.starttls()
+            server_ssl = smtplib.SMTP_SSL(self.server)
+            server_ssl.ehlo()
             server_ssl.login(self.sender_email, self.sender_password)
 
             # Send email!
