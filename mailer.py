@@ -148,4 +148,42 @@ class Mailer:
             print('Something went wrong!')
 
     def jinja_email(self):
-        pass
+        urls = ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
+        data = {
+            'img1': 'img/diya.gif',
+            'img2': 'img/logo.gif',
+            'urls': urls
+        }
+        text = self.env.get_template('email-body.html')
+        email_body = text.render(data)
+
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = "helooooo"
+        msg['From'] = self.sender_email
+        msg['To'] = ','.join(self.receivers)
+        msg.attach(MIMEText(email_body, 'html', 'utf-8'))
+
+        fp = open(data['img1'], 'rb')
+        img = MIMEImage(fp.read())
+        fp.close()
+        img.add_header('Content-ID', '<{}>'.format(data['img1']))
+        msg.attach(img)
+
+        fp = open(data['img2'], 'rb')
+        img = MIMEImage(fp.read())
+        fp.close()
+        img.add_header('Content-ID', '<{}>'.format(data['img2']))
+        msg.attach(img)
+
+        try:
+            # Set up server and login.
+            server_ssl = smtplib.SMTP_SSL(self.server)
+            server_ssl.ehlo()
+            server_ssl.login(self.sender_email, self.sender_password)
+
+            # Send email!
+            server_ssl.sendmail(self.sender_email, self.receivers, msg.as_string())
+            server_ssl.quit()
+            print('Email sent!')
+        except smtplib.SMTPException:
+            print('Something went wrong!')

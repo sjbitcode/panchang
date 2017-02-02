@@ -1,8 +1,11 @@
-<html>
-    <head></head>
-    <body>
-        <table>
-            
-        </table>
-    </body>
-</html>
+{% extends "email_base.html" %}
+
+{% block content %}
+
+<ul>
+{% for url in urls %}
+<li><a href="{{ url }}">{{ url }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

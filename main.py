@@ -67,4 +67,5 @@ heading = 'test heading'
 # m = Mailer(SENDER_EMAIL, SENDER_PASSWORD, SEND_TO, heading, MSG)
 m = Mailer(SENDER_EMAIL, SENDER_PASSWORD, SEND_TO, heading, 'some text')
 # m.send_email()
-m.send_html_email()
+# m.send_html_email()
+m.jinja_email()
