@@ -1,7 +1,9 @@
+import os
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -17,6 +19,15 @@ class Mailer:
         self.subject = subject
         self.body = body
         self.server = 'smtp.gmail.com'
+        self.templatedir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'templates'
+        )
+        self.imgdir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'img'
+        )
+        self.env = Environment(loader=FileSystemLoader(self.templatedir))
 
     def email_text(self):
         return 'Subject: {}\n\n{}'.format(self.subject, self.body)
@@ -39,6 +50,9 @@ class Mailer:
     def send_html_email(self):
         # Create message container - t
         # he correct MIME type is multipart/alternative.
+        attachment1 = 'logo.gif'
+        attachment2 = 'diya.gif'
+
         msg = MIMEMultipart('alternative')
         msg['Subject'] = "helooooo"
         msg['From'] = self.sender_email
@@ -48,6 +62,7 @@ class Mailer:
 <html>
     <head></head>
     <body>
+        <img src='cid:{}'>
         <table align="center" style="width:100%;">
             <tr>
                 <th style="text-align:center;">Suntime times</th>
@@ -107,10 +122,18 @@ class Mailer:
         </table>
     </body>
 </html>
-'''
+'''.format(attachment1)
+
         part2 = MIMEText(html, 'html')
         msg.attach(part2)
         # import pdb; pdb.set_trace();
+
+        fp = open(os.path.join(self.imgdir, attachment2), 'rb')
+        img = MIMEImage(fp.read())
+        fp.close()
+        img.add_header('Content-ID', '<{}>'.format(attachment1))
+        msg.attach(img)
+
         try:
             # Set up server and login.
             server_ssl = smtplib.SMTP_SSL(self.server)
@@ -123,3 +146,6 @@ class Mailer:
             print('Email sent!')
         except smtplib.SMTPException:
             print('Something went wrong!')
+
+    def jinja_email(self):
+        pass
