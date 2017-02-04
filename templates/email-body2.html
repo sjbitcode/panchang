@@ -1,0 +1,84 @@
+{% extends "email_base2.html" %}
+
+{% block content %}
+<!-- General section -->
+<tr>
+    <td></td>
+    <td style="padding-bottom: 0px;border-top: 2px solid #ccc;border-bottom: 2px solid #ccc;"><h3>GENERAL</h3></td>
+    <td></td>
+</tr>
+
+<tr>
+    <td></td>
+    <td style="padding-top: 10px;text-align: left;">
+        <table style="width: 100%;padding: 0% 8%;">
+            {% for key, value in sun.items() %}
+            <tr>
+                <td style="font-weight: bold;padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ key }}</td>
+                <td style="padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+    <td></td>
+</tr>
+
+<tr>
+    <td style="padding-top: 15px;padding-bottom: 15px;"></td>
+</tr>
+<!-- End General section -->
+
+<!-- Auspicious times section -->
+<tr>
+    <td></td>
+    <td style="padding-bottom: 0px;border-top: 2px solid #ccc;border-bottom: 2px solid #ccc;"><h3>AUSPICIOUS</h3></td>
+    <td></td>
+</tr>
+
+<tr>
+    <td></td>
+    <td style="padding-top: 10px;text-align: left;">
+        <table style="width: 100%;padding: 0% 8%;">
+            {% for key, value in auspicious.items() %}
+            <tr>
+                <td style="font-weight: bold;padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ key }}</td>
+                <td style="padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+    <td></td>
+</tr>
+
+<tr>
+    <td style="padding-top: 15px;padding-bottom: 15px;"></td>
+</tr>
+<!-- End Auspicious times section -->
+
+<!-- Inauspicious times section -->
+<tr>
+    <td></td>
+    <td style="padding-bottom: 0px;border-top: 2px solid #ccc;border-bottom: 2px solid #ccc;"><h3>INAUSPICIOUS</h3></td>
+    <td></td>
+</tr>
+
+<tr>
+    <td></td>
+    <td style="padding-top: 10px;text-align: left;">
+        <table style="width: 100%;padding: 0% 8%;">
+            {% for key, value in inauspicious.items() %}
+            <tr>
+                <td style="font-weight: bold;padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ key }}</td>
+                <td style="padding-top: 5px;padding-bottom: 5px;width: 50%;">{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+    <td></td>
+</tr>
+
+<tr>
+    <td style="padding-top: 15px;padding-bottom: 15px;"></td>
+</tr>
+<!-- End Inauspicious times section -->
+{% endblock %}

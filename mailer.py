@@ -126,7 +126,6 @@ class Mailer:
 
         part2 = MIMEText(html, 'html')
         msg.attach(part2)
-        # import pdb; pdb.set_trace();
 
         fp = open(os.path.join(self.imgdir, attachment2), 'rb')
         img = MIMEImage(fp.read())
@@ -147,22 +146,25 @@ class Mailer:
         except smtplib.SMTPException:
             print('Something went wrong!')
 
-    def jinja_email(self):
-        urls = ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
-        data = {
-            'img1': 'img/diya.gif',
-            'img2': 'img/logo.gif',
-            'urls': urls
-        }
-        text = self.env.get_template('email-body.html')
+    def jinja_email(self, data):
+        # urls = ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
+        data['img1'] = 'img/diya.gif'
+        data['img2'] = 'img/logo.gif'
+        # data = {
+        #     'img1': 'img/diya.gif',
+        #     'img2': 'img/logo.gif',
+        #     'urls': urls
+        # }
+        text = self.env.get_template('email-body2.html')
         email_body = text.render(data)
 
         msg = MIMEMultipart('alternative')
-        msg['Subject'] = "helooooo"
+        msg['Subject'] = data['subject']
         msg['From'] = self.sender_email
         msg['To'] = ','.join(self.receivers)
         msg.attach(MIMEText(email_body, 'html', 'utf-8'))
 
+        # Attach images to msg
         fp = open(data['img1'], 'rb')
         img = MIMEImage(fp.read())
         fp.close()

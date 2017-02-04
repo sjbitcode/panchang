@@ -50,15 +50,34 @@ class Panchang(Downloader):
         return tables
 
     def aggregate_data(self):
+        '''
+        Return a dictionary of dictionaries.
+
+        Ex. {
+            'subject': 'Panchang for January 20, 2017',
+            'sun': {'Sunrise':'6:07', 'Sunset':'5:20'},
+            'auspicious': {'Amritkalam': '12:20-2:20', 'Abhijit': '3:20-4:08'},
+            'inauspicious': {'Rahukalam': '9:38-10:00'},
+            'encoded_url': 'http://mypanchang.com/mn=0&city=New%20York'
+        }
+        '''
         tables = self.get_tables()
 
-        heading = tables[3].text
+        today = get_date_obj().strftime('%B %d, %Y')
+        subject = tables[3].text
         sun = self.get_sun_times(tables[4])
         auspicious = self.get_auspicious_times(tables[5])
         inauspicious = self.get_inauspicious_times(tables[5])
         encoded_url = '{}#{}'.format(self.encoded_url, get_date_obj().day)
 
-        return (heading, sun, auspicious, inauspicious, encoded_url)
+        return {
+            'today': today,
+            'subject': subject,
+            'sun': sun,
+            'auspicious': auspicious,
+            'inauspicious': inauspicious,
+            'encoded_url': encoded_url
+        }
 
     def get_sun_times(self, table):
         '''

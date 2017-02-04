@@ -1,14 +1,34 @@
 <!DOCTYPE>
 <html>
-    <head></head>
+    <head>
+        <style>
+        </style>
+    </head>
     <body>
         <center>
-            <img src="cid:{{ img1 }}">
-            <img src="cid:{{ img2 }}">
-            <img src="cid:{{ img1 }}">
+            <table style="border: 0px; padding: 8px;">
+                <tr>
+                    <td><img src="cid:{{ img1 }}"></td>
+                    <td>
+                        <a href="{{ encoded_url }}">
+                            <img src="cid:{{ img2 }}">
+                        </a>
+                    </td>
+                    <td><img src="cid:{{ img1 }}"></td>
+                </tr>
+
+                <tr>
+                    Good morning! Here's your panchang for today, {{ today }}.
+                </tr>
+            </table>
         </center>
 
         {% block content %}
         {% endblock %}
+
+        <center>
+            Have a great day!
+        </center>
+        All data taken from:<br>{{ encoded_url }}<br><br>
     </body>
 </html>

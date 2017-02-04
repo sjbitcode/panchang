@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div style="background-color: #74320c;padding: 10px;">
+        <div style="max-width: 600px;font-family: sans-serif;margin: 0 auto;background: white;text-align: center;font-size: 11px;border: 2px solid #d7d2d2;border-radius: 3px;">
+            <table style="width: 100%;padding: 0% 8%;">
+                <tr>
+                    <td style="width: 15%;"><img src="cid:{{ img1 }}"></td>
+                    <td>
+                        <h1>
+                            {{ today }}<br>Panchang
+                        </h1>
+                        <i>(New York, NY)</i>
+                    </td>
+                    <td style="width: 15%;"><img src="cid:{{ img1 }}"></td>
+                </tr>
+                
+                <tr>
+                    <td style="padding-top: 15px;padding-bottom: 15px;"></td>
+                </tr>
+            </table>
+
+            <table style="width: 100%;padding: 0% 8%;">
+                {% block content %}
+                {% endblock %}
+            </table>
+
+                
+            <table style="width: 100%;padding: 0% 8%;">
+                <tr>
+                    <td style="width: 15%;"><img src="cid:{{ img1 }}"></td>
+                    <td>
+                        <p>Visit today's MyPanchang page <a href="{{ encoded_url }}">here</a></p>
+                    </td>
+                    <td style="width: 15%;"><img src="cid:{{ img1 }}"></td>
+                </tr>
+
+                <tr>
+                    <td style="padding-top: 15px;padding-bottom: 15px;"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

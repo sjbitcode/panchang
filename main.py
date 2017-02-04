@@ -43,6 +43,7 @@ Have a great day!
 # Update params with current date and instantiate Panchang.
 update_params(query_params)
 p = Panchang(url, **query_params)
+data = p.aggregate_data()
 
 
 # Organize data from Panchang instance.
@@ -68,4 +69,4 @@ heading = 'test heading'
 m = Mailer(SENDER_EMAIL, SENDER_PASSWORD, SEND_TO, heading, 'some text')
 # m.send_email()
 # m.send_html_email()
-m.jinja_email()
+m.jinja_email(data)
