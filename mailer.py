@@ -9,16 +9,10 @@ from jinja2 import Environment, FileSystemLoader
 
 
 class Mailer:
-    def __init__(
-        self, sender_email, sender_password,
-        receivers, subject, body
-    ):
+    def __init__(self, sender_email, sender_password, smtp_server):
         self.sender_email = sender_email
         self.sender_password = sender_password
-        self.receivers = receivers
-        self.subject = subject
-        self.body = body
-        self.server = 'smtp.gmail.com'
+        self.smtp_server = smtp_server
         self.templatedir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             'templates'
@@ -29,163 +23,111 @@ class Mailer:
         )
         self.env = Environment(loader=FileSystemLoader(self.templatedir))
 
-    def email_text(self):
-        return 'Subject: {}\n\n{}'.format(self.subject, self.body)
+    def send_email(self, email_data, template):
+        '''
+        Establish smtp connection and login.
+        Create email message with given data and template.
+        Send email.
+        '''
+        smtp = self.smtp_connect()
+        msg = self.create_email(email_data, template)
 
-    def send_email(self):
         try:
-            # Set up server and login.
-            server_ssl = smtplib.SMTP_SSL(self.server)
-            server_ssl.ehlo()
-            server_ssl.login(self.sender_email, self.sender_password)
+            smtp.sendmail(
+                self.sender_email,
+                email_data['receivers'],
+                msg.as_string()
+            )
+            print('Email sent!!!')
+        except smtplib.SMTPException as e:
+            print('Could not send email: {}'.format(e))
+            raise
+        smtp.quit()
 
-            # Send email!
-            email_text = self.email_text()
-            server_ssl.sendmail(self.sender_email, self.receivers, email_text)
-            server_ssl.quit()
-            print('Email sent!')
-        except smtplib.SMTPException:
-            print('Something went wrong!')
+    def smtp_connect(self):
+        '''
+        Attempts to connect and login to an smtp server.
+        Calls smtp_login to login.
 
-    def send_html_email(self):
-        # Create message container - t
-        # he correct MIME type is multipart/alternative.
-        attachment1 = 'logo.gif'
-        attachment2 = 'diya.gif'
+        Returns smtp object if successful, else raises Exception.
+        '''
+        try:
+            smtp_ssl = smtplib.SMTP_SSL(self.smtp_server)
+            smtp_ssl.ehlo()
+            smtp_ssl = self.smtp_login(smtp_ssl)
+        except Exception as e:
+            print('Could not connect to {}: {}'.format(self.smtp_server, e))
+            raise
+        return smtp_ssl
 
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = "helooooo"
-        msg['From'] = self.sender_email
-        msg['To'] = ','.join(self.receivers)
+    def smtp_login(self, smtp):
+        '''
+        Attempts to login to an smtp server with
+        an email and password.
 
-        html = '''\
-<html>
-    <head></head>
-    <body>
-        <img src='cid:{}'>
-        <table align="center" style="width:100%;">
-            <tr>
-                <th style="text-align:center;">Suntime times</th>
-            </tr>
-            <tr>
-                <td>Sunrise</td>
-                <td>07:06:23 AM</td>
-            </tr>
-            <tr>
-                <td>Sunset</td>
-                <td>05:54:12 PM</td>
-            </tr>
+        Returns smtp object if successful, else raises Exception.
+        '''
+        try:
+            smtp.login(self.sender_email, self.sender_password)
+        except smtplib.SMTPException as e:
+            print('Could not login with {}/{} on {}: {}'.format(
+                self.sender_email, self.sender_password, smtp, e))
+            raise
+        return smtp
 
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
+    def render_template(self, data, template):
+        '''
+        Render given data context to given template.
+        '''
+        template = self.env.get_template(template)
+        email_body = template.render(data)
+        return email_body
 
-            <tr>
-                <th style="text-align:center;">Auspicious times</th>
-            </tr>
-            <tr>
-                <td>Abhijit Muhurta</td>
-                <td>11:49:40 AM - 12:30:03 PM</td>
-            </tr>
-            <tr>
-                <td>Amritkalam</td>
-                <td>08:22:41 AM - 09:38:25 AM</td>
-            </tr>
-
-            <tr></tr>
-            <tr></tr>
-            <tr></tr>
-
-            <tr>
-                <th style="text-align:center;">Inauspicious times</th>
-            </tr>
-            <tr>
-                <td>Durmuhurtham</td>
-                <td>11:49:40 AM - 12:30:03 PM</td>
-            </tr>
-            <tr>
-                <td>Yamagandam</td>
-                <td>11:09:02 PM - 12:41:22 AM (tomorrow)</td>
-            </tr>
-            <tr>
-                <td>Rahukalam</td>
-                <td>11:49:40 AM - 12:30:03 PM</td>
-            </tr>
-            <tr>
-                <td>Varjyam</td>
-                <td>11:49:40 AM - 12:30:03 PM</td>
-            </tr>
-            <tr>
-                <td>Gulikai</td>
-                <td>11:49:40 AM - 12:30:03 PM</td>
-            </tr>
-        </table>
-    </body>
-</html>
-'''.format(attachment1)
-
-        part2 = MIMEText(html, 'html')
-        msg.attach(part2)
-
-        fp = open(os.path.join(self.imgdir, attachment2), 'rb')
+    def attach_image(self, msg, img_path):
+        '''
+        Attaches image to MIMEMultipart email container.
+        '''
+        fp = open(img_path, 'rb')
         img = MIMEImage(fp.read())
         fp.close()
-        img.add_header('Content-ID', '<{}>'.format(attachment1))
+        img.add_header('Content-ID', '<{}>'.format(img_path))
         msg.attach(img)
+        return msg
 
-        try:
-            # Set up server and login.
-            server_ssl = smtplib.SMTP_SSL(self.server)
-            server_ssl.ehlo()
-            server_ssl.login(self.sender_email, self.sender_password)
+    def create_email(self, email_data, template):
+        '''
+        Given email_data dictionary,
+            ex. {
+                'subject': 'Hi there',
+                'receivers': ['bob@example.com', 'jim@example.com'],
+                'images': ['world.png', 'smiley.png'],
+                'data': {'msg': 'Hello world'}
+            }
 
-            # Send email!
-            server_ssl.sendmail(self.sender_email, self.receivers, msg.as_string())
-            server_ssl.quit()
-            print('Email sent!')
-        except smtplib.SMTPException:
-            print('Something went wrong!')
+        and a template (ex. 'say-hello.html'),
 
-    def jinja_email(self, data):
-        # urls = ['http://example.com/1', 'http://example.com/2', 'http://example.com/3']
-        data['img1'] = 'img/diya.gif'
-        data['img2'] = 'img/logo.gif'
-        # data = {
-        #     'img1': 'img/diya.gif',
-        #     'img2': 'img/logo.gif',
-        #     'urls': urls
-        # }
-        text = self.env.get_template('email-body2.html')
-        email_body = text.render(data)
+        create the email message, render the template with
+        data from email_data dictionary
+        '''
 
+        # inject absolute paths to all images in context data.
+        for img in email_data['images']:
+            img_name = img.split('.')[0]
+            email_data['data'][img_name] = os.path.join(self.imgdir, img)
+
+        # render template with context data.
+        email_body = self.render_template(email_data['data'], template)
+
+        # Create container email message.
         msg = MIMEMultipart('alternative')
-        msg['Subject'] = data['subject']
+        msg['Subject'] = email_data['subject']
         msg['From'] = self.sender_email
-        msg['To'] = ','.join(self.receivers)
+        msg['To'] = ','.join(email_data['receivers'])
+
+        # attach email body and images to msg.
         msg.attach(MIMEText(email_body, 'html', 'utf-8'))
+        for img in email_data['images']:
+            img_name = img.split('.')[0]
+            msg = self.attach_image(msg, email_data['data'][img_name])
 
-        # Attach images to msg
-        fp = open(data['img1'], 'rb')
-        img = MIMEImage(fp.read())
-        fp.close()
-        img.add_header('Content-ID', '<{}>'.format(data['img1']))
-        msg.attach(img)
-
-        fp = open(data['img2'], 'rb')
-        img = MIMEImage(fp.read())
-        fp.close()
-        img.add_header('Content-ID', '<{}>'.format(data['img2']))
-        msg.attach(img)
-
-        try:
-            # Set up server and login.
-            server_ssl = smtplib.SMTP_SSL(self.server)
-            server_ssl.ehlo()
-            server_ssl.login(self.sender_email, self.sender_password)
-
-            # Send email!
-            server_ssl.sendmail(self.sender_email, self.receivers, msg.as_string())
-            server_ssl.quit()
-            print('Email sent!')
-        except smtplib.SMTPException:
-            print('Something went wrong!')
+        return msg
