@@ -1,34 +1,48 @@
-<!DOCTYPE>
-<html>
-    <head>
-        <style>
-        </style>
-    </head>
-    <body>
-        <center>
-            <table style="border: 0px; padding: 8px;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div style="background-color: #74320c;padding: 10px;">
+        <div style="max-width: 600px;font-family: Helvetica,Arial,sans-serif;margin: 0 auto;background: white;text-align: center;font-size: 14px;border: 2px solid #d7d2d2;border-radius: 3px;">
+            <table width="100%" align="center" style="width: 100%;border-collapse: collapse;border: 0;">
                 <tr>
-                    <td><img src="cid:{{ img1 }}"></td>
+                    <td style="width: 15%;"><img src="cid:{{ diya }}"></td>
                     <td>
-                        <a href="{{ encoded_url }}">
-                            <img src="cid:{{ img2 }}">
-                        </a>
+                        <h1>
+                            {{ today }}<br>Panchang
+                        </h1>
+                        <i>(New York, NY)</i>
                     </td>
-                    <td><img src="cid:{{ img1 }}"></td>
+                    <td style="width: 15%;"><img src="cid:{{ diya }}"></td>
                 </tr>
-
+                
                 <tr>
-                    Good morning! Here's your panchang for today, {{ today }}.
+                    <td style="padding-top: 20px;padding-bottom: 20px;"></td>
                 </tr>
             </table>
-        </center>
 
-        {% block content %}
-        {% endblock %}
+            <table style="text-align: left;width: 100%;border-collapse: collapse;border: 0;" width="100%">
+                {% block content %}
+                {% endblock %}
+            </table>
 
-        <center>
-            Have a great day!
-        </center>
-        All data taken from:<br>{{ encoded_url }}<br><br>
-    </body>
+                
+            <table width="100%" align="center" style="width: 100%;border-collapse: collapse;border: 0;">
+                <tr>
+                    <td style="width: 15%;"><img src="cid:{{ diya }}"></td>
+                    <td>
+                        <p>Visit today's MyPanchang page <a href="{{ encoded_url }}">here</a></p>
+                    </td>
+                    <td style="width: 15%;"><img src="cid:{{ diya }}"></td>
+                </tr>
+
+                <tr>
+                    <td style="padding-top: 20px;padding-bottom: 20px;"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
 </html>

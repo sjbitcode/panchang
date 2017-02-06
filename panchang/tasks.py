@@ -1,17 +1,15 @@
-from celery.task import task
+from celery import Celery
+
 from helpers.mailer import Mailer
 from helpers.scraper import Panchang
 from helpers.utils import update_params
 from settings import SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
 
-
-@task
-def multiply(x, y):
-        multiplication = x * y
-        return "The result is " + str(multiplication)
+celery = Celery('tasks')
+celery.config_from_object('celeryconfig')
 
 
-@task
+@celery.task
 def send_panchang_email():
     # url and corresponding parameters
     url = 'http://www.mypanchang.com/phppanchang.php'
@@ -38,4 +36,4 @@ def send_panchang_email():
 
     # Instantiate Mailer class and send email with data and a template.
     m = Mailer(SENDER_EMAIL, SENDER_PASSWORD, 'smtp.gmail.com')
-    m.send_email(email_data, 'email-body2.html')
+    m.send_email(email_data, 'email-body.html')

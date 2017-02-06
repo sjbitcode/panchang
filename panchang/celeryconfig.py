@@ -11,11 +11,8 @@ CELERY_IMPORTS = ("tasks",)
 
 
 CELERYBEAT_SCHEDULE = {
-    'multiply-every-30-seconds': {
-        # 'task': 'tasks.multiply',
+    'send-panchang-email': {
         'task': 'tasks.send_panchang_email',
-        'schedule': crontab(hour=0, minute=47),
-        # 'schedule': 30.0,
-        # 'args': (1, 2)
+        'schedule': crontab(hour=6, minute=30)
     },
 }
