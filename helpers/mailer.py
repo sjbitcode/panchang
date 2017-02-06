@@ -7,18 +7,28 @@ from email.mime.image import MIMEImage
 
 from jinja2 import Environment, FileSystemLoader
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 class Mailer:
     def __init__(self, sender_email, sender_password, smtp_server):
         self.sender_email = sender_email
         self.sender_password = sender_password
         self.smtp_server = smtp_server
+        # self.templatedir = os.path.join(
+        #     os.path.dirname(os.path.abspath(__file__)),
+        #     'templates'
+        # )
         self.templatedir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
+            BASE_DIR,
             'templates'
         )
+        # self.imgdir = os.path.join(
+        #     os.path.dirname(os.path.abspath(__file__)),
+        #     'img'
+        # )
         self.imgdir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
+            BASE_DIR,
             'img'
         )
         self.env = Environment(loader=FileSystemLoader(self.templatedir))

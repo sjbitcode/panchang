@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-from utils import (get_date_obj, format_time_ranges)
+from .utils import (get_date_obj, format_time_ranges)
 
 
 class Downloader:

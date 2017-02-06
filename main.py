@@ -1,7 +1,7 @@
-from mailer import Mailer
-from scraper import Panchang
+from helpers.mailer import Mailer
+from helpers.scraper import Panchang
+from helpers.utils import update_params
 from settings import SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
-from utils import update_params
 
 
 # url and corresponding parameters
