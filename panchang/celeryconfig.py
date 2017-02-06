@@ -16,3 +16,6 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(hour=6, minute=30)
     },
 }
+
+# Run celery worker server:
+# celery -A tasks worker --loglevel=info --beat
