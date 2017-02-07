@@ -9,7 +9,7 @@ from celery import task
 from .helpers.mailer import Mailer
 from .helpers.scraper import Panchang
 from .helpers.utils import update_params
-from .settings import SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
+from .settings import LOGGER_1, SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
 
 
 # Configure celery
@@ -18,7 +18,7 @@ from .settings import SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
 
 # Configure logger
 # logging.config.dictConfig(LOG_SETTINGS)
-logger = logging.getLogger('panchang.tasks')
+logger = logging.getLogger(LOGGER_1)
 
 
 # @celery.task
@@ -56,4 +56,5 @@ def send_panchang_email():
 
     # Instantiate Mailer class and send email with data and a template.
     m = Mailer(SENDER_EMAIL, SENDER_PASSWORD, 'smtp.gmail.com')
+    logger.info('About to send email')
     m.send_email(email_data, 'email-body.html')

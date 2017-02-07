@@ -1,14 +1,14 @@
 import logging
 import logging.config
-
 import os
 import smtplib
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
 from jinja2 import Environment, FileSystemLoader
+
+from panchang.settings import LOGGER_2
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Configure logger
 # logging.config.dictConfig(LOG_SETTINGS)
-logger = logging.getLogger('panchang.tasks')
+logger = logging.getLogger(LOGGER_2)
 
 
 class Mailer:
@@ -38,23 +38,23 @@ class Mailer:
         msg = self.create_email(email_data, template)
 
         try:
+            # Intentionally mess up something!
+            # self.sender_email = ''
+
             smtp.sendmail(
                 self.sender_email,
                 email_data['receivers'],
                 msg.as_string()
             )
-            logger.info('Sent email!')
-            # print('Email sent!!!')
-            # log.info('Email sent from {} to {}'.format(
-            #     self.sender_email,
-            #     ', '.join(email_data['receivers'])
-            # ))
+            logger.info('Email sent from {} to {}'.format(
+                self.sender_email,
+                ', '.join(email_data['receivers'])
+            ))
         except smtplib.SMTPException as e:
-            # log.exception('Error sending mail from {} to {}'.format(
-            #     self.sender_email,
-            #     ', '.join(email_data['receivers'])
-            # ))
-            # print('Could not send email: {}'.format(e))
+            logger.exception('Error sending mail from {} to {}'.format(
+                self.sender_email,
+                ', '.join(email_data['receivers'])
+            ))
             raise
         smtp.quit()
 
@@ -66,11 +66,13 @@ class Mailer:
         Returns smtp object if successful, else raises Exception.
         '''
         try:
-            smtp_ssl = smtplib.SMTP_SSL(self.smtp_server)
+            # smtp_ssl = smtplib.SMTP_SSL(self.smtp_server)
+            smtp_ssl = smtplib.SMTP_SSL('3948sjdf')
             smtp_ssl.ehlo()
             smtp_ssl = self.smtp_login(smtp_ssl)
         except Exception as e:
-            print('Could not connect to {}: {}'.format(self.smtp_server, e))
+            logger.exception('Error connecting to {}'.format(self.smtp_server))
+            # print('Could not connect to {}: {}'.format(self.smtp_server, e))
             raise
         return smtp_ssl
 
@@ -84,8 +86,11 @@ class Mailer:
         try:
             smtp.login(self.sender_email, self.sender_password)
         except smtplib.SMTPException as e:
-            print('Could not login with {}/{} on {}: {}'.format(
-                self.sender_email, self.sender_password, smtp, e))
+            logger.exception('Error logging into {} with {}/{}'.format(
+                str(smtp), self.sender_email, self.sender_password
+            ))
+            # print('Could not login with {}/{} on {}: {}'.format(
+            #     self.sender_email, self.sender_password, smtp, e))
             raise
         return smtp
 

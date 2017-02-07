@@ -1,6 +1,6 @@
 import os
 
-# from celery.schedules import crontab
+from celery.schedules import crontab
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,22 +21,24 @@ CELERY_BROKER_PORT = 5672
 CELERY_BROKER_URL = 'amqp://'
 CELERY_RESULT_BACKEND = "rpc"
 CELERY_TIMEZONE = 'America/New_York'
-# CELERY_IMPORTS = ("tasks",)
-
-# CELERYBEAT_SCHEDULE = {
-#     'send-panchang-email': {
-#         'task': 'tasks.send_panchang_email',
-#         'schedule': crontab(hour=16, minute=48)
-#     },
-# }
+# Enables error emails.
+# CELERY_SEND_TASK_ERROR_EMAILS = True
 
 CELERYBEAT_SCHEDULE = {
     'send-panchang-email': {
-        'task': 'panchang.tasks.add',
-        'schedule': 30.0,
-        'args': (16, 16)
+        'task': '{}.tasks.send_panchang_email'.format(MODULE_NAME),
+        # 'schedule': crontab(hour=23, minute=59)
+        'schedule': crontab(minute='*/8')
     },
 }
+
+# CELERYBEAT_SCHEDULE = {
+#     'send-panchang-email': {
+#         'task': '{}.tasks.add'.format(MODULE_NAME),
+#         'schedule': 30.0,
+#         'args': (16, 16)
+#     },
+# }
 
 # CELERY_CONFIG = {
 #     'CELERY_IGNORE_RESULT': False,
@@ -53,6 +55,9 @@ CELERYBEAT_SCHEDULE = {
 #         },
 #     }
 # }
+
+LOGGER_1 = '{}.tasks'.format(MODULE_NAME)
+LOGGER_2 = '{}.helpers.mailer'.format(MODULE_NAME)
 
 # Log settings
 LOG_SETTINGS = {
@@ -78,13 +83,13 @@ LOG_SETTINGS = {
     },
 
     'loggers': {
-        'panchang.tasks': {
+        LOGGER_1: {
             'handlers': ['email_task'],
             'level': 'INFO',
             'propagate': True,
         },
 
-        'panchang.helpers.mailer': {
+        LOGGER_2: {
             'handlers': ['email_task'],
             'level': 'INFO',
             'propagate': True,
