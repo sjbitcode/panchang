@@ -12,7 +12,11 @@ from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-logger = logging.getLogger('mailer-logger')
+# logger = logging.getLogger('mailer-logger')
+
+# Configure logger
+# logging.config.dictConfig(LOG_SETTINGS)
+logger = logging.getLogger('panchang.tasks')
 
 
 class Mailer:
