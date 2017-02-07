@@ -9,9 +9,9 @@ LOG_PATH = os.path.join(BASE_DIR, 'log')
 MODULE_NAME = 'panchang'
 
 # Replace these values with your own!
-# SENDER_EMAIL = 'bob@example.com'
-# SENDER_PASSWORD = 'mypassword'
-# SEND_TO = ['bob@example.com', 'jen@example.com']
+SENDER_EMAIL = 'bob@example.com'
+SENDER_PASSWORD = 'mypassword'
+SEND_TO = ['bob@example.com', 'jen@example.com']
 
 
 # Celery settings
@@ -21,41 +21,18 @@ CELERY_BROKER_PORT = 5672
 CELERY_BROKER_URL = 'amqp://'
 CELERY_RESULT_BACKEND = "rpc"
 CELERY_TIMEZONE = 'America/New_York'
-# Enables error emails.
-# CELERY_SEND_TASK_ERROR_EMAILS = True
+# Use celery autodiscover_tasks or CELERY_IMPORTS
+# CELERY_IMPORTS = ('panchang.tasks',)
+
 
 CELERYBEAT_SCHEDULE = {
     'send-panchang-email': {
         'task': '{}.tasks.send_panchang_email'.format(MODULE_NAME),
-        # 'schedule': crontab(hour=23, minute=59)
-        'schedule': crontab(minute='*/8')
+        'schedule': crontab(hour=6, minute=30)
     },
 }
 
-# CELERYBEAT_SCHEDULE = {
-#     'send-panchang-email': {
-#         'task': '{}.tasks.add'.format(MODULE_NAME),
-#         'schedule': 30.0,
-#         'args': (16, 16)
-#     },
-# }
-
-# CELERY_CONFIG = {
-#     'CELERY_IGNORE_RESULT': False,
-#     'CELERY_BROKER_HOST': '127.0.0.1',
-#     'CELERY_BROKER_PORT': 5672,
-#     'CELERY_BROKER_URL': 'amqp://',
-#     'CELERY_RESULT_BACKEND': "rpc",
-#     'CELERY_TIMEZONE': 'America/New_York',
-#     'CELERYBEAT_SCHEDULE': {
-#         'send-panchang-email': {
-#             'task': 'panchang.tasks.add',
-#             'schedule': 30.0,
-#             'args': (16, 16)
-#         },
-#     }
-# }
-
+# Name loggers
 LOGGER_1 = '{}.tasks'.format(MODULE_NAME)
 LOGGER_2 = '{}.helpers.mailer'.format(MODULE_NAME)
 

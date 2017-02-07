@@ -10,12 +10,10 @@ from jinja2 import Environment, FileSystemLoader
 
 from panchang.settings import LOGGER_2
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# logger = logging.getLogger('mailer-logger')
-
-# Configure logger
-# logging.config.dictConfig(LOG_SETTINGS)
+# Get logger
 logger = logging.getLogger(LOGGER_2)
 
 
@@ -38,9 +36,6 @@ class Mailer:
         msg = self.create_email(email_data, template)
 
         try:
-            # Intentionally mess up something!
-            # self.sender_email = ''
-
             smtp.sendmail(
                 self.sender_email,
                 email_data['receivers'],
@@ -50,7 +45,7 @@ class Mailer:
                 self.sender_email,
                 ', '.join(email_data['receivers'])
             ))
-        except smtplib.SMTPException as e:
+        except smtplib.SMTPException:
             logger.exception('Error sending mail from {} to {}'.format(
                 self.sender_email,
                 ', '.join(email_data['receivers'])
@@ -66,13 +61,11 @@ class Mailer:
         Returns smtp object if successful, else raises Exception.
         '''
         try:
-            # smtp_ssl = smtplib.SMTP_SSL(self.smtp_server)
-            smtp_ssl = smtplib.SMTP_SSL('3948sjdf')
+            smtp_ssl = smtplib.SMTP_SSL(self.smtp_server)
             smtp_ssl.ehlo()
             smtp_ssl = self.smtp_login(smtp_ssl)
-        except Exception as e:
+        except Exception:
             logger.exception('Error connecting to {}'.format(self.smtp_server))
-            # print('Could not connect to {}: {}'.format(self.smtp_server, e))
             raise
         return smtp_ssl
 
@@ -85,12 +78,10 @@ class Mailer:
         '''
         try:
             smtp.login(self.sender_email, self.sender_password)
-        except smtplib.SMTPException as e:
+        except smtplib.SMTPException:
             logger.exception('Error logging into {} with {}/{}'.format(
                 str(smtp), self.sender_email, self.sender_password
             ))
-            # print('Could not login with {}/{} on {}: {}'.format(
-            #     self.sender_email, self.sender_password, smtp, e))
             raise
         return smtp
 
