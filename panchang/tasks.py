@@ -1,12 +1,27 @@
+import logging
+import logging.config
+
 from celery import Celery
 
 from helpers.mailer import Mailer
 from helpers.scraper import Panchang
 from helpers.utils import update_params
-from settings import SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
+from settings import LOG_SETTINGS, SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
 
+
+# Configure celery
 celery = Celery('tasks')
 celery.config_from_object('celeryconfig')
+
+# Configure logger
+logging.config.dictConfig(LOG_SETTINGS)
+logger = logging.getLogger('panchang.tasks')
+
+
+@celery.task
+def add(x, y):
+    # logger.warning("Adding %s + %s" % (x, y))
+    return x + y
 
 
 @celery.task

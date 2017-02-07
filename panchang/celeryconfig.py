@@ -10,10 +10,18 @@ CELERY_TIMEZONE = 'America/New_York'
 CELERY_IMPORTS = ("tasks",)
 
 
+# CELERYBEAT_SCHEDULE = {
+#     'send-panchang-email': {
+#         'task': 'tasks.send_panchang_email',
+#         'schedule': crontab(hour=16, minute=48)
+#     },
+# }
+
 CELERYBEAT_SCHEDULE = {
     'send-panchang-email': {
-        'task': 'tasks.send_panchang_email',
-        'schedule': crontab(hour=6, minute=30)
+        'task': 'tasks.add',
+        'schedule': 30.0,
+        'args': (16, 16)
     },
 }
 

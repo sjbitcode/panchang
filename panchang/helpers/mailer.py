@@ -1,3 +1,6 @@
+import logging
+import logging.config
+
 import os
 import smtplib
 
@@ -8,6 +11,8 @@ from email.mime.image import MIMEImage
 from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+logger = logging.getLogger('mailer-logger')
 
 
 class Mailer:
@@ -34,9 +39,18 @@ class Mailer:
                 email_data['receivers'],
                 msg.as_string()
             )
-            print('Email sent!!!')
+            logger.info('Sent email!')
+            # print('Email sent!!!')
+            # log.info('Email sent from {} to {}'.format(
+            #     self.sender_email,
+            #     ', '.join(email_data['receivers'])
+            # ))
         except smtplib.SMTPException as e:
-            print('Could not send email: {}'.format(e))
+            # log.exception('Error sending mail from {} to {}'.format(
+            #     self.sender_email,
+            #     ', '.join(email_data['receivers'])
+            # ))
+            # print('Could not send email: {}'.format(e))
             raise
         smtp.quit()
 
