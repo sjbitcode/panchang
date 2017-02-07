@@ -3,16 +3,16 @@ import logging.config
 
 from celery import Celery
 
-from .settings import LOG_SETTINGS
+from .settings import MODULE_NAME, LOG_SETTINGS
 
 
 # Configure celery
-celery = Celery('panchang')
+celery = Celery('MODULE_NAME')
 # app = celery.config_from_object(CELERY_CONFIG)
 # import pdb; pdb.set_trace();
 # app.autodiscover_tasks()
-celery.config_from_object('panchang.settings')
-celery.autodiscover_tasks(['panchang'])
+celery.config_from_object('{}.{}'.format(MODULE_NAME, 'settings'))
+celery.autodiscover_tasks(['MODULE_NAME'])
 
 # Configure logger
 logging.config.dictConfig(LOG_SETTINGS)
