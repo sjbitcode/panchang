@@ -2,39 +2,33 @@ import os
 
 from celery.schedules import crontab
 
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(BASE_DIR, 'log')
 
 MODULE_NAME = 'panchang'
 
-# Replace these values with your own!
-SENDER_EMAIL = 'bob@example.com'
-SENDER_PASSWORD = 'mypassword'
-SEND_TO = ['bob@example.com', 'jen@example.com']
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL')
+SENDER_PASSWORD = os.environ.get('SENDER_PASSWORD')
+SEND_TO = os.environ.get('SEND_TO').split(',')
 
-
-# Celery settings
+BROKER_URL = 'amqp://guest:guest@rabbit:5672'
+CELERY_RESULT_BACKEND = 'rpc'
 CELERY_IGNORE_RESULT = False
-CELERY_BROKER_HOST = '127.0.0.1'
-CELERY_BROKER_PORT = 5672
-CELERY_BROKER_URL = 'amqp://'
-CELERY_RESULT_BACKEND = "rpc"
 CELERY_TIMEZONE = 'America/New_York'
-# Use celery autodiscover_tasks or CELERY_IMPORTS
-# CELERY_IMPORTS = ('panchang.tasks',)
-
 
 CELERYBEAT_SCHEDULE = {
-    'send-panchang-email': {
+    'email-panchang-report': {
         'task': '{}.tasks.send_panchang_email'.format(MODULE_NAME),
-        'schedule': crontab(hour=6, minute=30)
-    },
+        # 'schedule': 30.0,
+        'schedule': crontab(minute='*/2')
+        # 'schedule': crontab(hour=22, minute=57)
+    }
 }
 
 # Name loggers
 LOGGER_1 = '{}.tasks'.format(MODULE_NAME)
 LOGGER_2 = '{}.helpers.mailer'.format(MODULE_NAME)
+
 
 # Log settings
 LOG_SETTINGS = {
