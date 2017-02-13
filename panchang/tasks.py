@@ -1,5 +1,4 @@
 import logging
-
 from celery import task
 
 from .helpers.mailer import Mailer
@@ -7,13 +6,11 @@ from .helpers.scraper import Panchang
 from .helpers.utils import update_params
 from .settings import LOGGER_1, SENDER_EMAIL, SENDER_PASSWORD, SEND_TO
 
-# Get logger
 logger = logging.getLogger(LOGGER_1)
 
 
 @task
 def send_panchang_email():
-    # url and corresponding parameters
     url = 'http://www.mypanchang.com/phppanchang.php'
     query_params = {
         'monthtype': '0',
