@@ -19,9 +19,8 @@ CELERY_TIMEZONE = 'America/New_York'
 CELERYBEAT_SCHEDULE = {
     'email-panchang-report': {
         'task': '{}.tasks.send_panchang_email'.format(MODULE_NAME),
-        # 'schedule': 30.0,
-        'schedule': crontab(minute='*/2')
-        # 'schedule': crontab(hour=22, minute=57)
+        'schedule': crontab(hour=6, minute=30)
+        # 'schedule': crontab(minute='*/2')
     }
 }
 
