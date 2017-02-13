@@ -1,8 +1,11 @@
 import datetime
+import pytz
+
+from panchang.settings import CELERY_TIMEZONE
 
 
 def get_date_obj():
-    return datetime.date.today()
+    return datetime.datetime.now(pytz.timezone(CELERY_TIMEZONE))
 
 
 def string_padding(key, width=21):
