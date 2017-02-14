@@ -1,5 +1,5 @@
 # panchang
-Daily panchang emails
+Get daily panchang emails at 6:30AM EST.
 
 ---
 
