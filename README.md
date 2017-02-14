@@ -31,8 +31,6 @@ The python-celery application to scrape data and send emails. This container wil
 
 ### Setup
 
-Pull this project's Docker image from Dockerhub via the command `docker pull sjbitcode/panchang`.
-
 Copy the `docker-compose-production.yml` file and replace the email configurations with your own email data.
 
 Run `docker-compose -f docker-compose-production.yml up -d` to build the containers and run in daemon mode.
