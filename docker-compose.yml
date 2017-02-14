@@ -7,7 +7,9 @@ services:
       - "5672:5672"
 
   worker:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: worker
     command: celery -A panchang.main worker -l info --beat
     volumes:
