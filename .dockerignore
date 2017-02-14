@@ -95,4 +95,3 @@ ENV/
 
 # misc
 celerybeat-schedule
-docker-compose-production.yml

@@ -1,0 +1,20 @@
+version: '2'
+services:
+  rabbit:
+    image: rabbitmq:3.6-alpine
+    container_name: rabbit
+    ports:
+      - "5672:5672"
+
+  worker:
+    image: sjbitcode/panchang
+    container_name: worker
+    volumes:
+      - ./logs:/worker/panchang/log
+    command: celery -A panchang.main worker -l info --beat
+    depends_on:
+      - rabbit
+    environment:
+      - SENDER_EMAIL=sender@example.com
+      - SENDER_PASSWORD=senderpassword
+      - SEND_TO=sangeeta@example.com,jen@example.com,bob@example.com
