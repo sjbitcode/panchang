@@ -148,7 +148,7 @@ class Panchang(Downloader):
                     for tag in elements:
                         try:
                             time = format_time_ranges(tag.next_element.text)
-                            times += ', {}'.format(time)
+                            times += ',{}'.format(time)
                         except:
                             pass
 

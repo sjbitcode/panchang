@@ -12,9 +12,18 @@
     <td style="padding-top: 10px;">
         <table style="width: 100%;border-collapse: collapse;border: 0;">
             {% for key, value in sun.items() %}
-            <tr style="border-bottom: 2px solid #eeecec;">
+            <tr>
                 <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-                <td style="padding-top: 5px;padding-bottom: 5px;">{{ value }}</td>
+            </tr>
+            <tr style="border-bottom: 2px solid #eeecec;">
+                <td style="padding-top: 5px;padding-bottom: 5px;">
+                    {% set timelist = value.split(',') %}
+                    {% for time in timelist %}
+                        <p>
+                            {{ time }}<br>
+                        </p>
+                    {% endfor %}
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -38,9 +47,18 @@
     <td style="padding-top: 10px;">
         <table style="width: 100%;border-collapse: collapse;border: 0;">
             {% for key, value in auspicious.items() %}
-            <tr style="border-bottom: 2px solid #eeecec;">
+            <tr>
                 <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-                <td style="padding-top: 5px;padding-bottom: 5px;">{{ value }}</td>
+            </tr>
+            <tr style="border-bottom: 2px solid #eeecec;">
+                <td style="padding-top: 5px;padding-bottom: 5px;">
+                    {% set timelist = value.split(',') %}
+                    {% for time in timelist %}
+                        <p>
+                            {{ time }}<br>
+                        </p>
+                    {% endfor %}
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -64,9 +82,18 @@
     <td style="padding-top: 10px;">
         <table style="width: 100%;border-collapse: collapse;border: 0;">
             {% for key, value in inauspicious.items() %}
-            <tr style="border-bottom: 2px solid #eeecec;">
+            <tr>
                 <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-                <td style="padding-top: 5px;padding-bottom: 5px;">{{ value }}</td>
+            </tr>
+            <tr style="border-bottom: 2px solid #eeecec;">
+                <td style="padding-top: 5px;padding-bottom: 5px;">
+                    {% set timelist = value.split(',') %}
+                    {% for time in timelist %}
+                        <p>
+                            {{ time }}<br>
+                        </p>
+                    {% endfor %}
+                </td>
             </tr>
             {% endfor %}
         </table>
