@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-from .utils import (get_date_obj, format_time_ranges)
+from .utils import (get_date_obj, format_time_ranges, get_first_time)
 
 
 class Downloader:
@@ -10,10 +10,10 @@ class Downloader:
     from a specific website.
     '''
 
-    def __init__(self, url, **kwargs):
+    def __init__(self, url, queryparams):
         self.url = url
         self.encoded_url = ''
-        self.queryparams = kwargs
+        self.queryparams = queryparams
         self.content = ''
 
     def download(self):
@@ -33,8 +33,8 @@ class Panchang(Downloader):
     Call aggregate_data() to see final tuple of
     data to be injected in email message.
     '''
-    def __init__(self, url, **kwargs):
-        super(Panchang, self).__init__(url, **kwargs)
+    def __init__(self, url, options):
+        super(Panchang, self).__init__(url, queryparams=options)
 
     def get_html(self):
         self.download()
@@ -51,13 +51,20 @@ class Panchang(Downloader):
 
     def aggregate_data(self):
         '''
-        Return a dictionary of dictionaries.
+        Return a dictionary of the following data.
 
         Ex. {
-            'subject': 'Panchang for January 20, 2017',
-            'sun': {'Sunrise':'6:07', 'Sunset':'5:20'},
-            'auspicious': {'Amritkalam': '12:20-2:20', 'Abhijit': '3:20-4:08'},
-            'inauspicious': {'Rahukalam': '9:38-10:00'},
+            'today': 'June 07, 2017',
+            'subject': 'Panchang for June 07, 2017',
+            'sun_keys': ['Sunrise', 'Sunset'],
+            'ausp_keys': ['Abhijit Muhurta', 'Amritkalam'],
+            'inausp_keys': ['Rahukalam', 'Yamagandam', 'Gulikai',
+                            'Varjyam', 'Durmuhurtham'],
+            'times': [
+                ('12:30:42', '12:30:42 PM - 01:18:42 PM', 'Rahukalam'),
+                ('13:24:34', '01:24:34 PM - 02:24:16 PM', 'Durmuhurtham'),
+                ('14:30:51', '02:30:51 PM - 04:17:32 PM', 'Varjyam')
+            ]
             'encoded_url': 'http://mypanchang.com/mn=0&city=New%20York'
         }
         '''
@@ -65,17 +72,24 @@ class Panchang(Downloader):
 
         today = get_date_obj().strftime('%B %d, %Y')
         subject = tables[3].text
+        encoded_url = '{}#{}'.format(self.encoded_url, get_date_obj().day)
+
+        # Get lists for each category of time.
         sun = self.get_sun_times(tables[4])
         auspicious = self.get_auspicious_times(tables[5])
         inauspicious = self.get_inauspicious_times(tables[5])
-        encoded_url = '{}#{}'.format(self.encoded_url, get_date_obj().day)
+
+        # Create complete sorted list of all time categories.
+        complete_times = self.combine_sort_times(sun, auspicious, inauspicious)
 
         return {
             'today': today,
             'subject': subject,
-            'sun': sun,
-            'auspicious': auspicious,
-            'inauspicious': inauspicious,
+            'times': complete_times,
+            'sun_keys': ['Sunrise', 'Sunset'],
+            'ausp_keys': ['Abhijit Muhurta', 'Amritkalam'],
+            'inausp_keys': ['Rahukalam', 'Yamagandam', 'Gulikai',
+                            'Varjyam', 'Durmuhurtham'],
             'encoded_url': encoded_url
         }
 
@@ -108,55 +122,67 @@ class Panchang(Downloader):
         keys = [
             'Rahukalam', 'Yamagandam', 'Gulikai',
             'Varjyam', 'Durmuhurtham'
-
         ]
         return self.from_table(keys, table)
 
     def from_table(self, keys, table):
         '''
         Given keys (search terms) and a table,
-        create and return dictionary with keys
-        their respective times in the table.
+        return list of tuples in the form:
 
-        Ex: {'Sunrise': '07:07:56', 'Sunset': '17:11:30'}
+        (starting_time, formatted_time_range, name_of_time_period)
+
+        [
+            ('13:24:34', '01:24:34 PM - 02:24:16 PM', 'Durmuhurtham'),
+            ('14:30:51', '02:30:51 PM - 04:17:32 PM', 'Varjyam'),
+            ('12:30:42', '12:30:42 PM - 01:18:42 PM', 'Rahukalam')
+        ]
         '''
-
-        info_dict = {}
+        info_list = []
 
         for key in keys:
             # Returns list of bs4 tag elements.
             elements = table.find_all(text='{}:'.format(key))
 
-            # If elements nonempty
             if elements:
-
-                # If only one element found, get the time and store in dict.
-                if len(elements) == 1:
+                # If there are multiple of same key, iterate.
+                for tag in elements:
                     try:
-                        info_dict[key] = format_time_ranges(
-                            elements[0].next_element.text
+                        time = tag.next_element.text
+                        info_list.append(
+                            (
+                                get_first_time(time),
+                                format_time_ranges(time),
+                                key
+                            )
                         )
                     except:
-                        info_dict[key] = 'None'
-
-                # If multiple elements found with same key, concatenate times.
-                # ex. ['Amritkalam', 'Amritkalam']
-                else:
-                    times = ''
-
-                    # concatenate string with each element's times
-                    for tag in elements:
-                        try:
-                            time = format_time_ranges(tag.next_element.text)
-                            times += ',{}'.format(time)
-                        except:
-                            pass
-
-                    times = times.lstrip(', ')
-                    info_dict[key] = times
-
-            # If no elements, make value 'None'
+                        pass
             else:
-                info_dict[key] = 'None'
+                continue
 
-        return info_dict
+        return info_list
+
+    def combine_sort_times(self, *time_lists):
+        '''
+        Takes arbitrary number of lists.
+
+        Each list is of the form:
+        [
+            ('09:24:34', '09:24:34 PM - 10:24:16 PM', 'Amritkalam'),
+            ('18:40:51', '06:40:51 PM - 08:19:32 PM', 'Varjyam')
+        ]
+
+        Combines lists into a complete list.
+        Return sorted list. Sorted based on first element of the tuple.
+        '''
+        complete_list = []
+
+        # Build one list from all lists inputted.
+        for time_list in time_lists:
+            complete_list.extend(time_list)
+
+        # Sort complete list by first element of each tuple.
+        complete_list = sorted(complete_list, key=lambda x: x[0])
+
+        return complete_list

@@ -1,11 +1,13 @@
 version: '2'
 services:
   rabbit:
-    image: rabbitmq:3.6-alpine
+    image: rabbitmq:3.6.10-management-alpine
     container_name: rabbit
     restart: always
     ports:
       - "5672:5672"
+      - "4369:4369"
+      - "15672:15672"
 
   worker:
     image: sjbitcode/panchang
@@ -16,7 +18,5 @@ services:
     command: celery -A panchang.main worker -l info --beat
     depends_on:
       - rabbit
-    environment:
-      - SENDER_EMAIL=sender@example.com
-      - SENDER_PASSWORD=senderpassword
-      - SEND_TO=sangeeta@example.com,jen@example.com,bob@example.com
+    env_file:
+      - ./deploy/env/prod/worker.env

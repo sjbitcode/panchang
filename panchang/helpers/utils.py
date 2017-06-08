@@ -103,3 +103,17 @@ def format_time_ranges(time):
         )
     else:
         return military_to_standard(time)
+
+
+def get_first_time(time):
+    '''
+    If given a range of times, ex. '08:20:10-10:25:16',
+    return the first time, ex. '08:20:10'.
+
+    Else, return the time.
+    '''
+    if '-' in time:
+        time_list = time.split('-')
+        return time_list[0]
+    else:
+        return time

@@ -1,108 +1,68 @@
 {% extends "email_base.html" %}
 
 {% block content %}
-<!-- General section -->
 <tr>
     <td style="width: 5%;"></td>
-    <td style="padding-bottom: 0px;border-bottom: 3px solid #ccc;"><h3>GENERAL</h3></td>
+    <td style="text-align: center;padding-bottom: 0px;border-bottom: 3px solid #ccc;"><h3>DAILY SCHEDULE</h3></td>
     <td style="width: 5%;"></td>
 </tr>
 <tr>
     <td style="width: 5%;"></td>
+
     <td style="padding-top: 10px;">
         <table style="width: 100%;border-collapse: collapse;border: 0;">
-            {% for key, value in sun.items() %}
-            <tr>
-                <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-            </tr>
-            <tr style="border-bottom: 2px solid #eeecec;">
-                <td style="padding-top: 5px;padding-bottom: 5px;">
-                    {% set timelist = value.split(',') %}
-                    {% for time in timelist %}
-                        <p>
-                            {{ time }}<br>
-                        </p>
-                    {% endfor %}
-                </td>
-            </tr>
+            {% for time_tuple in times %}
+
+                {% if time_tuple[2] in sun_keys %}
+
+                    <tr>
+                        <td style="padding-top: 15px;font-weight: bold;width: 30%;color: #343434;">
+                            {{ time_tuple[1] }}
+                        </td>
+                    </tr>
+
+                    <tr style="padding-bottom: 10px;border-bottom: 2px solid #eeecec;">
+                        <td style="padding-bottom: 15px;font-style: italic;color: #454242;">
+                            - {{ time_tuple[2] }}
+                        </td>
+                    </tr>
+
+                {% elif time_tuple[2] in ausp_keys %}
+
+                    <tr>
+                        <td style="padding-top: 15px;font-weight: bold;width: 30%;color: #0b8f0b;">
+                            {{ time_tuple[1] }}
+                        </td>
+                    </tr>
+
+                    <tr style="padding-bottom: 10px;border-bottom: 2px solid #eeecec;">
+                        <td style="padding-bottom: 15px;font-style: italic;color: #0a950a;">
+                            - {{ time_tuple[2] }}
+                        </td>
+                    </tr>
+
+                {% elif time_tuple[2] in inausp_keys %}
+
+                    <tr>
+                        <td style="padding-top: 15px;font-weight: bold;width: 30%;color: #ca1010;">
+                            {{ time_tuple[1] }}
+                        </td>
+                    </tr>
+
+                    <tr style="padding-bottom: 10px;border-bottom: 2px solid #eeecec;">
+                        <td style="padding-bottom: 15px;font-style: italic;color: #d50f0f;">
+                            - {{ time_tuple[2] }}
+                        </td>
+                    </tr>
+
+                {% endif %}
+
             {% endfor %}
         </table>
     </td>
     <td style="width: 5%;"></td>
 </tr>
-
 <tr>
     <td style="padding-top: 20px;padding-bottom: 20px;"></td>
 </tr>
-<!-- End General section -->
-
-<!-- Auspicious times section -->
-<tr>
-    <td style="width: 5%;"></td>
-    <td style="padding-bottom: 0px;border-bottom: 3px solid #ccc;"><h3>AUSPICIOUS TIMES</h3></td>
-    <td style="width: 5%;"></td>
-</tr>
-<tr>
-    <td style="width: 5%;"></td>
-    <td style="padding-top: 10px;">
-        <table style="width: 100%;border-collapse: collapse;border: 0;">
-            {% for key, value in auspicious.items() %}
-            <tr>
-                <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-            </tr>
-            <tr style="border-bottom: 2px solid #eeecec;">
-                <td style="padding-top: 5px;padding-bottom: 5px;">
-                    {% set timelist = value.split(',') %}
-                    {% for time in timelist %}
-                        <p>
-                            {{ time }}<br>
-                        </p>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </td>
-    <td style="width: 5%;"></td>
-</tr>
-
-<tr>
-    <td style="padding-top: 20px;padding-bottom: 20px;"></td>
-</tr>
-<!-- End Auspicious times section -->
-
-<!-- Inauspicious times section -->
-<tr>
-    <td style="width: 5%;"></td>
-    <td style="padding-bottom: 0px;border-bottom: 3px solid #ccc;"><h3>INAUSPICIOUS TIMES</h3></td>
-    <td style="width: 5%;"></td>
-</tr>
-<tr>
-    <td style="width: 5%;"></td>
-    <td style="padding-top: 10px;">
-        <table style="width: 100%;border-collapse: collapse;border: 0;">
-            {% for key, value in inauspicious.items() %}
-            <tr>
-                <td style="font-weight: bold;width: 30%;padding-top: 5px;padding-bottom: 5px;">{{ key }}</td>
-            </tr>
-            <tr style="border-bottom: 2px solid #eeecec;">
-                <td style="padding-top: 5px;padding-bottom: 5px;">
-                    {% set timelist = value.split(',') %}
-                    {% for time in timelist %}
-                        <p>
-                            {{ time }}<br>
-                        </p>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </td>
-    <td style="width: 5%;"></td>
-</tr>
-
-<tr>
-    <td style="padding-top: 20px;padding-bottom: 20px;"></td>
-</tr>
-<!-- End Inauspicious times section -->
 {% endblock %}

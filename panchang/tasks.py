@@ -22,7 +22,7 @@ def send_panchang_email():
 
     # Update params with current date and instantiate Panchang instance.
     update_params(query_params)
-    p = Panchang(url, **query_params)
+    p = Panchang(url, query_params)
     data = p.aggregate_data()
 
     # Prepare data to create email.
