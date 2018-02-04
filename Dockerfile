@@ -1,4 +1,4 @@
-FROM python:3.6.1-alpine
+FROM python:3.6.4-alpine
 
 ENV INSTALL_PATH /worker
 RUN mkdir -p $INSTALL_PATH $INSTALL_PATH/log

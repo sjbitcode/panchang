@@ -5,6 +5,9 @@ from celery.schedules import crontab
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_PATH = os.path.join(BASE_DIR, 'log')
 
+# Create log directory
+os.makedirs(LOG_PATH, exist_ok=True)
+
 MODULE_NAME = 'panchang'
 
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL')
