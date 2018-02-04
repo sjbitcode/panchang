@@ -96,3 +96,4 @@ ENV/
 # misc
 misc/
 celerybeat-schedule
+konnect.yml
